@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SunGrid Support</title>
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      }
+
+      body {
+        background-color: #f4f7f6;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        padding: 20px;
+      }
+
+      .container {
+        background-color: #ffffff;
+        padding: 40px;
+        border-radius: 12px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        width: 100%;
+        max-width: 500px;
+        text-align: center;
+      }
+
+      h1 {
+        color: #1a365d;
+        margin-bottom: 25px;
+        font-size: 2.2rem;
+        letter-spacing: 1px;
+      }
+
+      .input-group {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+      }
+
+      label {
+        text-align: left;
+        font-weight: 600;
+        color: #4a5568;
+        font-size: 0.95rem;
+      }
+
+      textarea {
+        width: 100%;
+        padding: 12px 15px;
+        border: 2px solid #e2e8f0;
+        border-radius: 8px;
+        font-size: 1rem;
+        resize: vertical;
+        min-height: 100px;
+        outline: none;
+        transition: border-color 0.3s;
+      }
+
+      textarea:focus {
+        border-color: #3182ce;
+      }
+
+      button {
+        background-color: #3182ce;
+        color: white;
+        border: none;
+        padding: 12px 20px;
+        font-size: 1rem;
+        font-weight: bold;
+        border-radius: 8px;
+        cursor: pointer;
+        transition:
+          background-color 0.3s,
+          transform 0.1s;
+      }
+
+      button:hover {
+        background-color: #2b6cb0;
+      }
+
+      button:active {
+        transform: scale(0.98);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <!-- Main Heading -->
+      <h1>SunGrid Support</h1>
+
+      <!-- Question Input & Button -->
+      <div class="input-group">
+        <label for="user-prompt">Ask questions</label>
+        <textarea
+          id="user-prompt"
+          placeholder="Type your question here..."
+        ></textarea>
+        <button onclick="handleRunPrompt()">Run prompt</button>
+      </div>
+    </div>
+  </body>
+</html>
