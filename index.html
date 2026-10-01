@@ -1,0 +1,192 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SunGrid Support</title>
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      }
+
+      body {
+        background-color: #f4f7f6;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        padding: 20px;
+      }
+
+      .container {
+        background-color: #ffffff;
+        padding: 40px;
+        border-radius: 12px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        width: 100%;
+        max-width: 500px;
+        text-align: center;
+      }
+
+      h1 {
+        color: #1a365d;
+        margin-bottom: 25px;
+        font-size: 2.2rem;
+        letter-spacing: 1px;
+      }
+
+      .input-group {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+      }
+
+      label {
+        text-align: left;
+        font-weight: 600;
+        color: #4a5568;
+        font-size: 0.95rem;
+      }
+
+      textarea {
+        width: 100%;
+        padding: 12px 15px;
+        border: 2px solid #e2e8f0;
+        border-radius: 8px;
+        font-size: 1rem;
+        resize: vertical;
+        min-height: 100px;
+        outline: none;
+        transition: border-color 0.3s;
+      }
+
+      textarea:focus {
+        border-color: #3182ce;
+      }
+
+      button {
+        background-color: #3182ce;
+        color: white;
+        border: none;
+        padding: 12px 20px;
+        font-size: 1rem;
+        font-weight: bold;
+        border-radius: 8px;
+        cursor: pointer;
+        transition:
+          background-color 0.3s,
+          transform 0.1s;
+      }
+
+      button:hover {
+        background-color: #2b6cb0;
+      }
+
+      button:active {
+        transform: scale(0.98);
+      }
+
+      button:disabled {
+        background-color: #a0aec0;
+        cursor: not-allowed;
+      }
+
+      .response-box {
+        margin-top: 25px;
+        padding: 15px;
+        border-radius: 8px;
+        background-color: #edf2f7;
+        text-align: left;
+        color: #2d3748;
+        display: none; /* Default hidden rahega jab tak response na aaye */
+        white-space: pre-wrap;
+        word-wrap: break-word;
+      }
+
+      .response-box h3 {
+        color: #2b6cb0;
+        font-size: 1.1rem;
+        margin-bottom: 8px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <!-- Main Heading -->
+      <h1>SunGrid Support</h1>
+
+      <!-- Question Input & Button -->
+      <div class="input-group">
+        <label for="user-prompt">Ask questions</label>
+        <textarea
+          id="user-prompt"
+          placeholder="Type your question here..."
+        ></textarea>
+        <button id="submit-btn" onclick="handleRunPrompt()">Run prompt</button>
+      </div>
+
+      <!-- AI Answer Container -->
+      <div id="response-container" class="response-box">
+        <h3>AI Response:</h3>
+        <p id="response-text"></p>
+      </div>
+    </div>
+
+    <!-- JavaScript code backend se connect hone ke liye -->
+    <script>
+      async function handleRunPrompt() {
+        const promptInput = document.getElementById("user-prompt");
+        const responseContainer = document.getElementById("response-container");
+        const responseText = document.getElementById("response-text");
+        const submitBtn = document.getElementById("submit-btn");
+
+        const prompt = promptInput.value.trim();
+
+        if (!prompt) {
+          alert("Please enter a question first!");
+          return;
+        }
+
+        // Button disabled karein aur loading text dikhayein
+        submitBtn.disabled = true;
+        submitBtn.innerText = "Processing...";
+        responseContainer.style.display = "block";
+        responseText.innerText = "Thinking... Please wait...";
+
+        try {
+          // Python Flask server par request bhejna
+          const response = await fetch("/api/ask", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ prompt: prompt }),
+          });
+
+          const data = await response.json();
+
+          // Raw JSON format render karega
+          responseText.innerText = JSON.stringify(data, null, 2);
+        } catch (error) {
+          console.error("Error:", error);
+          responseText.innerText = JSON.stringify(
+            {
+              answer: "Could not connect to Python backend server!",
+              source: "Network Error",
+              confidence: 0.0,
+            },
+            null,
+            2,
+          );
+        } finally {
+          // Button ko dubara normal status par lana
+          submitBtn.disabled = false;
+          submitBtn.innerText = "Run prompt";
+        }
+      }
+    </script>
+  </body>
+</html>
