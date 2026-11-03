@@ -75,7 +75,7 @@ APIKey = "Paste Your APIKey Here"
 
 The application relies on a local document store to fetch accurate answers. The ingestion script processes your files through the following pipeline:
 
-  ### 1.Supported Formats
+  ### 1. Supported Formats
   Place your documentation files inside the **Data/** folder. The script automatically supports:
   - Markdown (.md)
   - Portable Document Format (.pdf)
@@ -89,16 +89,17 @@ The application relies on a local document store to fetch accurate answers. The 
   - Builds a FAISS index **(IndexFlatL2)** for high-speed similarity search.
   - Generates a metadata map linking chunks to their source files.
 
-  ## How to Add New Documents & Re-run Ingestion:
+  ### How to Add New Documents & Re-run Ingestion:
   If you add new documents or update existing ones, follow these steps:
-    1. Drop your new *.md* or *.pdf* files inside the **Data/** directory.
-    2. Run the ingestion script in your terminal:
 
-        python ingest.py
+  1. Drop your new *.md* or *.pdf* files inside the **Data/** directory.
+  2. Run the ingestion script in your terminal:
 
-    3. This will process the files and automatically update/overwrite:
-      - solar_docs.index (The FAISS vector database) 
-      - solar_metadata.json (The source-to-text metadata mapping)
+      python ingest.py
+
+  3. This will process the files and automatically update/overwrite:
+    - solar_docs.index (The FAISS vector database) 
+    - solar_metadata.json (The source-to-text metadata mapping)
 
 ---
 
