@@ -52,7 +52,6 @@ def retrieve_chunks(query, k=3):
             if chunk:
                 retrieved_texts.append(chunk.get("text", ""))
                 raw_source = chunk.get("source", "solar_doc.pdf")
-                # Sirf file ka naam extract karne ke liye (path hata kar)
                 clean_source = os.path.basename(raw_source)
                 if clean_source not in sources:
                     sources.append(clean_source)
@@ -88,7 +87,11 @@ def ask_ai():
         system_instructions = (
             "You are a customer support AI assistant for SunGrid solar installations. "
             "Use the provided context information to answer the user's question accurately. "
-            "If the answer is not in the context, use your general solar knowledge safely."
+            "CRITICAL FORMATTING RULE: Write your response entirely in clean, readable plain text. "
+            "Do NOT use markdown bolding (asterisks like **), bullet points, escape sequences (like /n, /n/n etc.) with special symbols, or raw escape formatting. "
+            "Write in smooth, natural sentences and paragraphs. "
+            "You must output a valid JSON object with a single key 'answer' containing your response text, like this: "
+            '{"answer": "Your clean and polished response here"}'
         )
 
         user_content = f"Context:\n{context_text}\n\nQuestion: {user_prompt}"
@@ -99,10 +102,17 @@ def ask_ai():
                 {"role": "user", "content": user_content}
             ],
             model="openai/gpt-oss-20b",
+            response_format={"type": "json_object"}
         )
 
         ai_raw_content = response.choices[0].message.content.strip()
         
+        try:
+            parsed_json = json.loads(ai_raw_content)
+            clean_answer = parsed_json.get("answer", ai_raw_content)
+        except json.JSONDecodeError:
+            clean_answer = ai_raw_content
+
         usage = getattr(response, 'usage', None)
         tokens_used = {
             "prompt_tokens": getattr(usage, 'prompt_tokens', 0) if usage else 0,
@@ -113,20 +123,24 @@ def ask_ai():
         latency_ms = int((time.time() - start_time) * 1000)
 
         return jsonify({
-            "answer": ai_raw_content,
-            "sources": sources,
-            "tokens_used": tokens_used,
-            "latency_ms": latency_ms
+            "Answer": clean_answer,
+            "Sources": sources,
+            "Tokens Used": tokens_used,
+            "Latency(ms)": latency_ms
         })
 
     except Exception as e:
         print("❌ Detailed API Error Traceback:")
         traceback.print_exc()
         
+        latency_ms = int((time.time() - start_time) * 1000)
+        
         return jsonify({
-            "error": "Something went wrong while contacting the AI API.",
-            "details": str(e)
-        }), 500
+            "Answer": "I am currently experiencing technical difficulties connecting to the AI service. Please try again in a moment.",
+            "Sources": [],
+            "Tokens Used": {"prompt_tokens": 0, "completion_tokens": 0, "total_tokens": 0},
+            "Latency(ms)": latency_ms
+        }), 200
 
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))
