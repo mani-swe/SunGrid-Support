@@ -8,3 +8,5 @@ langchain-community
 langchain-huggingface
 pypdf
 tiktoken
+faiss-cpu
+sentence-transformers
